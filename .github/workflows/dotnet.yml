@@ -38,9 +38,9 @@ jobs:
             git config --global user.email "YoumiHa@outlook.com"
             git config --global user.name "YoumiHaLH"
     - name: Set up version
-      run: Set-Variable -Name VERSION -Value $(date +%Y%m%d%H%M)
+      run: Set-Variable -Name VERSION -Value "${{ $(date +%Y%m%d%H%M) }}"
     - name: Create tag
-      run: git tag -a ${{ env.VERSION }} -m "Release ${{ env.VERSION }}"
+      run: git tag -a $VERSION -m "Release ${{ env.VERSION }}"
     - name: Push tag
       run: git push origin ${{ env.VERSION }}
     - name: Release
