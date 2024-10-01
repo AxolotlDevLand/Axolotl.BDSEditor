@@ -6,6 +6,7 @@ namespace Axolotl.BDSEditor
     {
         static void Main(string[] args)
         {
+           
             try
             {
                 switch (args[0])
@@ -14,15 +15,20 @@ namespace Axolotl.BDSEditor
                         break;
                     case "bedrock_server_mod":
                         break;
+                    default:
+                        Console.WriteLine("No Parms!");
+                        return;
                 }
                 Console.WriteLine("Patching!");
                 var readAllBytes = File.ReadAllBytes(args[0] + ".exe");
                 var Textbytes = Encoding.UTF8.GetBytes(Keydata.old_Key);
                 var arrayFindIndexOf = ArrayFindIndexOf(readAllBytes, Textbytes, 0);
+                Console.WriteLine("Find at "+arrayFindIndexOf.ToString());
                 var bytes = new byte[Textbytes.Length];
                 Array.Copy(readAllBytes, arrayFindIndexOf, bytes, 0, Textbytes.Length);
                 var data = ArrayReplaceBytes(readAllBytes, Encoding.UTF8.GetBytes(Keydata.new_Key), arrayFindIndexOf);
                 File.WriteAllBytes(args[0] + "_patch.exe", data);
+                GC.Collect(3);
                 Console.WriteLine("Patched!");
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadLine();
@@ -47,6 +53,8 @@ namespace Axolotl.BDSEditor
             memory.Write(bytes);
             memory.Write(pBytes);
             memory.Write(by);
+            memory.Flush();
+            memory.Close();
             return memory.ToArray();
         }
         public static int ArrayFindIndexOf(byte[] pBT, byte[] pMatch, int pStartIndex)
