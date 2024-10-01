@@ -38,7 +38,7 @@ jobs:
             git config --global user.email "YoumiHa@outlook.com"
             git config --global user.name "YoumiHaLH"
     - name: Set up version
-      run: echo "VERSION=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+      run: Set-Variable -Name VERSION -Value $(date +%Y%m%d%H%M)
     - name: Create tag
       run: git tag -a ${{ env.VERSION }} -m "Release ${{ env.VERSION }}"
     - name: Push tag
