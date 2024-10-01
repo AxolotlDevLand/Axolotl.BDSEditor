@@ -6,6 +6,7 @@ name: .NET
 on:
   push:
     branches: [ "master" ]
+    
   pull_request:
     branches: [ "master" ]
     tags:
@@ -15,7 +16,9 @@ jobs:
   build:
 
     runs-on: windows-latest
-
+    permissions:                # Job-level permissions configuration starts here
+      contents: write           # 'write' access to repository contents
+      pull-requests: write      # 'write' access to pull requests
     steps:
     - uses: actions/checkout@v4
     
@@ -30,13 +33,19 @@ jobs:
     - name: Copy files
       run: cp  ./bin/Release/net9.0/win-x64/publish/Axolotl.BDSEditor.exe ./Axolotl.BDSEditor.exe
       
-    - name: Create Release and Upload Release Asset
+    - name: Init git
+      run: |
+            git config --global user.email "YoumiHa@outlook.com"
+            git config --global user.name "YoumiHaLH"
+    - name: Set up version
+      run: echo "VERSION=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+    - name: Create tag
+      run: git tag -a ${{ env.VERSION }} -m "Release ${{ env.VERSION }}"
+    - name: Push tag
+      run: git push origin ${{ env.VERSION }}
+    - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.ref }}
-        name: Release ${{ github.ref }}
-        body: TODO New Release.
-        draft: true
-        prerelease: false
-        files: |
-          Axolotl.BDSEditor.exe
+          tag_name: ${{ env.VERSION }}
+          name: BDSEditor
+          files: Axolotl.BDSEditor.exe
